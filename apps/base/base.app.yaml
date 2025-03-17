@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: { { chart_name } }
+  namespace: argocd
+spec:
+  project: { { project } }
+  source:
+    chart: { { chart_name } }
+    repoURL: { { repo_url } }
+    targetRevision: '{{chart_version}}'
+    helm:
+      releaseName: { { chart_name } }
+      valueFiles:
+        - '{{chart_name}}/values.common.yaml'
+        - '{{chart_name}}/values.{{env}}.yaml'
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: { { namespace } }

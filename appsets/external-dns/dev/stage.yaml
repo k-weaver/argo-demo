@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: external-dns-appset
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: stage
+            server: https://kubernetes.default.svc
+            chart_version: '1.15.0'
+            chart_name: external-dns
+            repo_url: https://kubernetes-sigs.github.io/external-dns
+            namespace: kube-system
+            project: core-components
+  template:
+    metadata:
+      name: external-dns-{{env}}
+      namespace: argocd
+    spec:
+      project: { { project } }
+      source:
+        repoURL: https://github.com/k-weaver/argo-demo
+        targetRevision: main
+        path: apps/base/external-dns
+      destination:
+        server: '{{server}}'
+        namespace: argocd
