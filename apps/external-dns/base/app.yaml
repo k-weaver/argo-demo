@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-dns
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: external-dns
+    repoURL: https://kubernetes-sigs.github.io/external-dns
+    targetRevision: '{{chart_version}}'
+    helm:
+      releaseName: external-dns
+      valueFiles:
+        - values.common.yaml
+        - values.{{env}}.yaml
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kube-system

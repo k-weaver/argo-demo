@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: dev-us-west-1
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ['missingkey=error']
+  generators:
+    - git:
+      repoURL: https://github.com/k-weaver/argo-demo.git
+      revision: HEAD
+      directories:
+        - path: apps/*/envs/dev-us-west-1
+  template:
+    metadata:
+      name: '{{index .path.segments 1}}-{{index .path.segments 3}}'
+    spec:
+      # The project the application belongs to.
+      project: dev
+
+      # Source of the application manifests
+      source:
+        repoURL: https://github.com/k-weaver/argo-demo.git
+        targetRevision: HEAD
+        # This will resolve to apps/<app-name>/envs/<env-name>; Dynamic path based on the generator
+        path: '{{.path.path}}'
+
+      # Destination cluster and namespace to deploy the application
+      destination:
+        server: https://kubernetes.default.svc
+        # This will resolve to <app-name>-<env-name> i.e. external-dns-dev-us-west-1
+        namespace: '{{index .path.segments 1}}-{{index .path.segments 3}}'
