@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: external-dns-appset
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: dev
+            targetRevision: HEAD
+            valuesFile: apps/external-dns/dev.values.yaml
+          # - name: dev2
+          #   targetRevision: v1.0.0
+          #   valuesFile: apps/external-dns/dev2.values.yaml
+          # - name: dev3
+          #   targetRevision: v1.0.0
+          #   valuesFile: apps/external-dns/dev3.values.yaml
+  template:
+    metadata:
+      name: external-dns-{{name}}
+    spec:
+      project: default
+      source:
+        repoURL: 'https://kubernetes-sigs.github.io/external-dns.git'
+        targetRevision: { { targetRevision } }
+        chart: external-dns
+        helm:
+          valueFiles:
+            - apps/external-dns/common-values.yaml
+            - { { valuesFile } }
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: external-dns
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
