@@ -27,7 +27,7 @@ status: {}
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: common-appset
+  name: dev-non-core-appset
   namespace: argocd
 spec:
   generators:
@@ -48,16 +48,16 @@ spec:
           # ... add additional entries for your other Helm charts
   template:
     metadata:
-      name: '{{.name}}'
+      name: '{{name}}'
     spec:
       project: dev
       source:
-        repoURL: '{{.repoURL}}'
-        targetRevision: '{{.targetRevision}}'
-        chart: '{{.chart}}'
+        repoURL: '{{repoURL}}'
+        targetRevision: '{{targetRevision}}'
+        chart: '{{chart}}'
         helm:
           valueFiles:
-            - 'apps/{{.chart}}/common-values.yaml'
+            - 'apps/{{chart}}/common-values.yaml'
             - '{{.valuesFile}}'
       destination:
         server: 'https://kubernetes.default.svc'
