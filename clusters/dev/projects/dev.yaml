@@ -27,82 +27,42 @@ status: {}
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: '0'
-  creationTimestamp: null
-  name: dev
+  name: common-appset
   namespace: argocd
 spec:
   generators:
-    - git:
-        files:
-          - path: clusters/dev/apps/**/dev/config.json
-        repoURL: https://github.com/k-weaver/argo-demo.git
-        requeueAfterSeconds: 20
-        revision: ''
-        template:
-          metadata: {}
-          spec:
-            destination: {}
-            project: ''
-    - git:
-        files:
-          - path: clusters/dev/apps/**/dev/config_dir.json
-        repoURL: https://github.com/k-weaver/argo-demo.git
-        requeueAfterSeconds: 20
-        revision: ''
-        template:
-          metadata: {}
-          spec:
-            destination: {}
-            project: ''
-            source:
-              directory:
-                exclude: '{{ exclude }}'
-                include: '{{ include }}'
-                jsonnet: {}
-                recurse: true
-              repoURL: ''
-    - git:
-        files:
-          - path: clusters/dev/apps/*.yaml
-        repoURL: https://github.com/k-weaver/argo-demo.git
-        requeueAfterSeconds: 20
-        revision: ''
-        template:
-          metadata: {}
-          spec:
-            destination: {}
-            project: ''
-  syncPolicy: {}
+    - list:
+        elements:
+          - name: external-dns
+            chart: external-dns
+            repoURL: https://kubernetes-sigs.github.io/external-dns
+            targetRevision: '1.9.0'
+            valuesFile: apps/external-dns/dev-values.yaml
+            destNamespace: external-dns
+          - name: keda
+            chart: keda
+            repoURL: https://kedacore.github.io/charts
+            targetRevision: '2.4.0'
+            valuesFile: apps/keda/dev-values.yaml
+            destNamespace: keda
+          # ... add additional entries for your other Helm charts
   template:
     metadata:
-      labels:
-        app.kubernetes.io/managed-by: argocd-autopilot
-        app.kubernetes.io/name: '{{ name }}'
-      name: dev-{{ .name }}
-      namespace: argocd
+      name: '{{.name}}'
     spec:
-      destination:
-        namespace: '{{ destNamespace }}'
-        server: '{{ destServer }}'
-      ignoreDifferences:
-        - group: argoproj.io
-          jsonPointers:
-            - /status
-          kind: Application
       project: dev
       source:
-        repoURL: '{{repoURL}}'
-        targetRevision: '{{targetRevision}}'
-        chart: '{{chart}}'
+        repoURL: '{{.repoURL}}'
+        targetRevision: '{{.targetRevision}}'
+        chart: '{{.chart}}'
         helm:
           valueFiles:
-            - 'app-values/{{chart}}/common.values.yaml'
-            - 'app-values/{{chart}}/dev.values.yaml'
+            - 'apps/{{.chart}}/common-values.yaml'
+            - '{{.valuesFile}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{.destNamespace}}'
       syncPolicy:
         automated:
-          allowEmpty: true
           prune: true
           selfHeal: true
-status: {}
