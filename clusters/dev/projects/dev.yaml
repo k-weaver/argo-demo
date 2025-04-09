@@ -65,7 +65,7 @@ spec:
               repoURL: ''
     - git:
         files:
-          - path: clusters/dev/apps/**/*.yaml
+          - path: clusters/dev/apps/*.yaml
         repoURL: https://github.com/k-weaver/argo-demo.git
         requeueAfterSeconds: 20
         revision: ''
