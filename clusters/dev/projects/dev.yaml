@@ -36,7 +36,7 @@ spec:
           - name: external-dns
             chart: external-dns
             repoURL: https://kubernetes-sigs.github.io/external-dns
-            targetRevision: '1.9.0'
+            targetRevision: '0.16.0'
             valuesFile: apps/external-dns/dev-values.yaml
             destNamespace: external-dns
           - name: keda
