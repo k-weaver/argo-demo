@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: dev-apps-matrix
+  namespace: argocd
+spec:
+  generators:
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - {
+                    cluster: 'dev-cluster1',
+                    server: 'https://dev-cluster1.example.com',
+                  }
+                - {
+                    cluster: 'dev-cluster2',
+                    server: 'https://dev-cluster2.example.com',
+                  }
+                - {
+                    cluster: 'dev-cluster3',
+                    server: 'https://dev-cluster3.example.com',
+                  }
+          - list:
+              elements:
+                - {
+                    name: 'external-dns',
+                    chart: 'external-dns',
+                    targetRevision: '1.9.0',
+                    valuesFile: 'apps/external-dns/dev-values.yaml',
+                    namespace: 'external-dns',
+                  }
+                - {
+                    name: 'keda',
+                    chart: 'keda',
+                    targetRevision: '2.4.0',
+                    valuesFile: 'apps/keda/dev-values.yaml',
+                    namespace: 'keda',
+                  }
+  template:
+    metadata:
+      name: '{{.name}}-{{.cluster}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/your-org/your-repo.git'
+        targetRevision: HEAD
+        chart: '{{.chart}}'
+        helm:
+          valueFiles:
+            - 'apps/{{.chart}}/common-values.yaml'
+            - '{{.valuesFile}}'
+      destination:
+        server: '{{.server}}'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
