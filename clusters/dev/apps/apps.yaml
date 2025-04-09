@@ -10,33 +10,15 @@ spec:
           - name: external-dns
             chart: external-dns
             repoURL: https://kubernetes-sigs.github.io/external-dns
-            targetRevision: '1.9.0'
+            targetRevision: '0.16.0'
             valuesFile: app-values/external-dns/dev-values.yaml
             destNamespace: external-dns
+            destServer: https://kubernetes.default.svc
           - name: keda
             chart: keda
             repoURL: https://kedacore.github.io/charts
             targetRevision: '2.4.0'
             valuesFile: app-values/keda/dev-values.yaml
             destNamespace: keda
+            destServer: https://kubernetes.default.svc
           # ... add additional entries for your other Helm charts
-  template:
-    metadata:
-      name: '{{.name}}'
-    spec:
-      project: default
-      source:
-        repoURL: '{{.repoURL}}'
-        targetRevision: '{{.targetRevision}}'
-        chart: '{{.chart}}'
-        helm:
-          valueFiles:
-            - 'app-values/{{.chart}}/common.values.yaml'
-            - 'app-values/{{.chart}}/dev.values.yaml'
-      destination:
-        server: 'https://kubernetes.default.svc'
-        namespace: '{{.destNamespace}}'
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true

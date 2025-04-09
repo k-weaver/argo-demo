@@ -79,8 +79,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/managed-by: argocd-autopilot
-        app.kubernetes.io/name: '{{ appName }}'
-      name: dev-{{ userGivenName }}
+        app.kubernetes.io/name: '{{ name }}'
+      name: dev-{{ name }}
       namespace: argocd
     spec:
       destination:
@@ -93,9 +93,13 @@ spec:
           kind: Application
       project: dev
       source:
-        path: '{{ srcPath }}'
-        repoURL: '{{ srcRepoURL }}'
-        targetRevision: '{{ srcTargetRevision }}'
+        repoURL: '{{repoURL}}'
+        targetRevision: '{{targetRevision}}'
+        chart: '{{chart}}'
+        helm:
+          valueFiles:
+            - 'app-values/{{chart}}/common.values.yaml'
+            - 'app-values/{{chart}}/dev.values.yaml'
       syncPolicy:
         automated:
           allowEmpty: true
