@@ -80,7 +80,7 @@ spec:
       labels:
         app.kubernetes.io/managed-by: argocd-autopilot
         app.kubernetes.io/name: '{{ name }}'
-      name: dev-{{name}}
+      name: dev-{{ .name }}
       namespace: argocd
     spec:
       destination:
