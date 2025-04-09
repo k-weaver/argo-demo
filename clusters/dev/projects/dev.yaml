@@ -37,13 +37,13 @@ spec:
             chart: external-dns
             repoURL: https://kubernetes-sigs.github.io/external-dns
             targetRevision: 'v0.16.0'
-            valuesFile: apps/external-dns/dev-values.yaml
+            valuesFile: apps/external-dns/dev.values.yaml
             destNamespace: external-dns
           - name: keda
             chart: keda
             repoURL: https://kedacore.github.io/charts
             targetRevision: 'v2.4.0'
-            valuesFile: apps/keda/dev-values.yaml
+            valuesFile: apps/keda/dev.values.yaml
             destNamespace: keda
           # ... add additional entries for your other Helm charts
   template:
@@ -57,7 +57,7 @@ spec:
         chart: '{{chart}}'
         helm:
           valueFiles:
-            - 'apps/{{chart}}/common-values.yaml'
+            - 'apps/{{chart}}/common.values.yaml'
             - '{{valuesFile}}'
       destination:
         server: 'https://kubernetes.default.svc'
