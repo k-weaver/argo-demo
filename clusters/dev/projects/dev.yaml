@@ -36,13 +36,13 @@ spec:
           - name: external-dns
             chart: external-dns
             repoURL: https://kubernetes-sigs.github.io/external-dns
-            targetRevision: '0.16.0'
+            targetRevision: 'v0.16.0'
             valuesFile: apps/external-dns/dev-values.yaml
             destNamespace: external-dns
           - name: keda
             chart: keda
             repoURL: https://kedacore.github.io/charts
-            targetRevision: '2.4.0'
+            targetRevision: 'v2.4.0'
             valuesFile: apps/keda/dev-values.yaml
             destNamespace: keda
           # ... add additional entries for your other Helm charts
