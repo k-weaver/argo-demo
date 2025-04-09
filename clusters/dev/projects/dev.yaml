@@ -58,10 +58,10 @@ spec:
         helm:
           valueFiles:
             - 'apps/{{chart}}/common-values.yaml'
-            - '{{.valuesFile}}'
+            - '{{valuesFile}}'
       destination:
         server: 'https://kubernetes.default.svc'
-        namespace: '{{.destNamespace}}'
+        namespace: '{{destNamespace}}'
       syncPolicy:
         automated:
           prune: true
