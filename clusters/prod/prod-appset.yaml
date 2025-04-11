@@ -1,33 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
-kind: AppProject
-metadata:
-  annotations:
-    argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
-    argocd.argoproj.io/sync-options: PruneLast=true
-    argocd.argoproj.io/sync-wave: '-2'
-  creationTimestamp: null
-  name: dev
-  namespace: argocd
-spec:
-  clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
-  description: dev project
-  destinations:
-    - namespace: '*'
-      server: '*'
-  namespaceResourceWhitelist:
-    - group: '*'
-      kind: '*'
-  sourceRepos:
-    - '*'
-status: {}
-
----
-apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: dev-non-core-appset
+  name: prod-non-core-appset
   namespace: argocd
 spec:
   generators:
@@ -35,25 +9,25 @@ spec:
         elements:
           - name: external-dns
             chart: external-dns
-            repoURL: https://github.com/k-weaver/argo-demo.git
+            repoURL: https://github.com/k-weaver/argo-demo.git # Replace with your actual GitHub repo URL
             targetRevision: HEAD
             chartPath: charts/external-dns
-            chartVersion: 'v0.16.0'
-            valuesFile: app-values/external-dns/dev.values.yaml
+            chartVersion: 'v0.16.1' # Note the different version for prod
+            valuesFile: app-values/external-dns/prod.values.yaml
             destNamespace: external-dns
           - name: keda
             chart: keda
             repoURL: https://github.com/k-weaver/argo-demo.git
             targetRevision: HEAD
             chartPath: charts/keda
-            chartVersion: 'v2.4.0'
-            valuesFile: app-values/keda/dev.values.yaml
+            chartVersion: 'v2.4.1' # Note the different version for prod
+            valuesFile: app-values/keda/prod.values.yaml
             destNamespace: keda
   template:
     metadata:
       name: '{{name}}'
     spec:
-      project: dev
+      project: prod
       source:
         repoURL: '{{repoURL}}'
         targetRevision: '{{targetRevision}}'
