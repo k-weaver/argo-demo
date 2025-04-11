@@ -1,5 +1,4 @@
-namespace: 'kube-system'
-
-serviceAccount:
-  create: true
-  name: 'external-dns-dev'
+external-dns:
+  serviceAccount:
+    create: true
+    name: 'external-dns-dev'
