@@ -8,5 +8,5 @@ appVersion: '1.16.0'
 # Dependencies represent charts that this umbrella chart depends on
 dependencies:
   - name: external-dns
-    version: 'v0.16.0'
+    version: '1.16.0'
     repository: 'https://kubernetes-sigs.github.io/external-dns/'
