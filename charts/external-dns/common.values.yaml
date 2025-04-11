@@ -1,6 +1,6 @@
 external-dns:
-  namespace: 'kube-system'
+  namespace: kube-system
 
   serviceAccount:
     create: true
-    name: 'external-dns-sa'
+    name: external-dns-sa
