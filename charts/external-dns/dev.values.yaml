@@ -1,4 +1,3 @@
 external-dns:
   serviceAccount:
     create: true
-    name: external-dns-dev
