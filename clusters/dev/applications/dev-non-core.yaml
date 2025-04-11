@@ -1,29 +1,4 @@
-apiVersion: argoproj.io/v1alpha1
-kind: AppProject
-metadata:
-  annotations:
-    argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
-    argocd.argoproj.io/sync-options: PruneLast=true
-    argocd.argoproj.io/sync-wave: '-2'
-  creationTimestamp: null
-  name: dev
-  namespace: argocd
-spec:
-  clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
-  description: dev project
-  destinations:
-    - namespace: '*'
-      server: '*'
-  namespaceResourceWhitelist:
-    - group: '*'
-      kind: '*'
-  sourceRepos:
-    - '*'
-status: {}
-
----
+# This file defines the ArgoCD ApplicationSet for the dev project.
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -51,7 +26,7 @@ spec:
     metadata:
       name: '{{name}}'
     spec:
-      project: dev
+      project: dev-non-core
       source:
         repoURL: '{{repoURL}}'
         targetRevision: '{{targetRevision}}'
@@ -60,7 +35,6 @@ spec:
           valueFiles:
             - 'common.values.yaml'
             - 'dev.values.yaml'
-          # This allows overriding the dependency version in the umbrella chart
           parameters:
             - name: dependencies[0].version
               value: '{{chartVersion}}'

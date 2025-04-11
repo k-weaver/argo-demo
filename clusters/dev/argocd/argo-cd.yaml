@@ -1,7 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  creationTimestamp: null
   labels:
     app.kubernetes.io/managed-by: argocd-autopilot
     app.kubernetes.io/name: argo-cd
@@ -12,13 +11,13 @@ spec:
     namespace: argocd
     server: https://kubernetes.default.svc
   ignoreDifferences:
-  - group: argoproj.io
-    jsonPointers:
-    - /status
-    kind: Application
+    - group: argoproj.io
+      jsonPointers:
+        - /status
+      kind: Application
   project: default
   source:
-    path: clusters/dev/bootstrap/argo-cd
+    path: clusters/dev/argocd
     repoURL: https://github.com/k-weaver/argo-demo.git
   syncPolicy:
     automated:
@@ -26,13 +25,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-    - allowEmpty=true
-status:
-  health: {}
-  summary: {}
-  sync:
-    comparedTo:
-      destination: {}
-      source:
-        repoURL: ""
-    status: ""
+      - allowEmpty=true
