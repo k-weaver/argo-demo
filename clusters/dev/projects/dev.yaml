@@ -38,7 +38,7 @@ spec:
             repoURL: https://github.com/k-weaver/argo-demo.git
             targetRevision: HEAD
             chartPath: charts/external-dns
-            chartVersion: 'v0.16.0'
+            chartVersion: '1.16.0'
             destNamespace: external-dns
           - name: keda
             chart: keda
