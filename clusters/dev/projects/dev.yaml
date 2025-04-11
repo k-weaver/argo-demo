@@ -39,7 +39,6 @@ spec:
             targetRevision: HEAD
             chartPath: charts/external-dns
             chartVersion: 'v0.16.0'
-            valuesFile: app-values/external-dns/dev.values.yaml
             destNamespace: external-dns
           - name: keda
             chart: keda
@@ -47,7 +46,6 @@ spec:
             targetRevision: HEAD
             chartPath: charts/keda
             chartVersion: 'v2.4.0'
-            valuesFile: app-values/keda/dev.values.yaml
             destNamespace: keda
   template:
     metadata:
@@ -60,8 +58,8 @@ spec:
         path: '{{chartPath}}'
         helm:
           valueFiles:
-            - '../../../app-values/{{chart}}/common.values.yaml'
-            - '../../../{{valuesFile}}'
+            - 'common.values.yaml'
+            - 'dev.values.yaml'
           # This allows overriding the dependency version in the umbrella chart
           parameters:
             - name: dependencies[0].version
