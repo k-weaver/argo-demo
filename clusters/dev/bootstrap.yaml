@@ -22,7 +22,8 @@ spec:
     path: clusters/dev
     repoURL: https://github.com/k-weaver/argo-demo.git
     directory:
-      include: 'clusters/dev/*.yaml'
+      include: '*.yaml'
+      exclude: '../prod/**'
   syncPolicy:
     automated:
       allowEmpty: true
