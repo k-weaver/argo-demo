@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: argocd
 resources:
   - https://github.com/argoproj/argo-cd/manifests/base?ref=v2.10.3
-  - github-repo-creds.yaml
 configMapGenerator:
   - behavior: merge
     literals:
