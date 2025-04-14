@@ -1,13 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  labels:
-    app.kubernetes.io/managed-by: argocd-autopilot
-    app.kubernetes.io/name: argo-cd
   name: argo-cd
   namespace: argocd
   annotations:
-    argocd.argoproj.io/manifest-generate-paths: '.'
+    argocd.argoproj.io/sync-wave: '-20'
 spec:
   destination:
     namespace: argocd
@@ -19,7 +16,7 @@ spec:
       kind: Application
   project: default
   source:
-    path: clusters/dev/bootstrap/argo-cd
+    path: clusters/dev/argocd
     repoURL: https://github.com/k-weaver/argo-demo.git
     directory:
       recurse: true
