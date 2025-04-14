@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
   labels:
     app.kubernetes.io/managed-by: argocd-autopilot
-    app.kubernetes.io/name: bootstrap
-  name: bootstrap
+    app.kubernetes.io/name: argo-cd
+  name: argo-cd
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/manifest-generate-paths: '.'
 spec:
   destination:
     namespace: argocd
@@ -19,11 +19,10 @@ spec:
       kind: Application
   project: default
   source:
-    path: clusters/dev
+    path: clusters/dev/bootstrap/argo-cd
     repoURL: https://github.com/k-weaver/argo-demo.git
     directory:
-      include: '*.yaml|bootstrap/**/*.yaml'
-      exclude: '../prod/**'
+      recurse: true
   syncPolicy:
     automated:
       allowEmpty: true
