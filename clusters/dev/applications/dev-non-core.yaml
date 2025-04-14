@@ -25,6 +25,12 @@ spec:
   template:
     metadata:
       name: '{{name}}'
+      annotations:
+        # Validate=false is used to skip validation of the Helm chart, required when allowing downgrades
+        # RespectIgnoreDifferences=true is used to respect the ignoreDifferences settings in the Application
+        # This is required to prevent the ApplicationSet controller from overwriting the ignoreDifferences settings
+        argocd.argoproj.io/sync-options: Validate=false,RespectIgnoreDifferences=true
+        argocd.argoproj.io/helm-version: v3
     spec:
       project: dev-non-core
       source:
@@ -47,3 +53,5 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+          - RespectIgnoreDifferences=true
+          - AllowDowngrade=true
