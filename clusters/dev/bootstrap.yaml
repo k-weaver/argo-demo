@@ -11,11 +11,10 @@ spec:
   project: default
   source:
     repoURL: https://github.com/k-weaver/argo-demo.git
-    path: clusters/dev
+    path: clusters/dev/applications
     directory:
-      recurse: false
-      include: 'clusters/dev/applications/*.yaml'
-      exclude: '{**/bootstrap/**,../prod/**}'
+      recurse: true
+      include: '*.yaml'
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
