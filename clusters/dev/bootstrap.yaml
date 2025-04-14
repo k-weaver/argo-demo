@@ -11,9 +11,33 @@ spec:
     repoURL: https://github.com/k-weaver/argo-demo.git
     path: clusters/dev
     directory:
-      recurse: true
-      include: '{infrastructure/*.yaml,applications/*.yaml}'
+      recurse: false
+      include: 'applications/*.yaml'
       exclude: '{**/bootstrap/**,../prod/**}'
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bootstrap-infrastructure
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/k-weaver/argo-demo.git
+    path: clusters/dev/infrastructure
+    kustomize: {}
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

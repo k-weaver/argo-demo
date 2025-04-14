@@ -2,16 +2,17 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: argocd
 resources:
-  - https://github.com/argoproj-labs/argocd-autopilot/manifests/base?ref=v0.4.19
+  - https://github.com/argoproj/argo-cd/manifests/base?ref=v2.10.3
+  - github-repo-creds.yaml
 configMapGenerator:
   - behavior: merge
     literals:
       - |
         repository.credentials=- passwordSecret:
-            key: git_token
-            name: autopilot-secret
+            key: password
+            name: github-repo-creds
           url: https://github.com/
           usernameSecret:
-            key: git_username
-            name: autopilot-secret
+            key: username
+            name: github-repo-creds
     name: argocd-cm
