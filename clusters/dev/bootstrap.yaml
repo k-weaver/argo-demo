@@ -11,10 +11,9 @@ spec:
   project: default
   source:
     repoURL: https://github.com/k-weaver/argo-demo.git
-    path: clusters/dev
     directory:
       recurse: false
-      include: 'applications/*.yaml'
+      include: 'clusters/dev/applications/*.yaml'
       exclude: '{**/bootstrap/**,../prod/**}'
   destination:
     server: https://kubernetes.default.svc
