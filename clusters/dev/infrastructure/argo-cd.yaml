@@ -16,10 +16,12 @@ spec:
       kind: Application
   project: default
   source:
-    path: clusters/dev/argocd
+    path: clusters/dev/infrastructure
     repoURL: https://github.com/k-weaver/argo-demo.git
     directory:
       recurse: true
+    kustomize:
+      buildOptions: '--enable-alpha-plugins --load-restrictor LoadRestrictionsNone'
   syncPolicy:
     automated:
       allowEmpty: true
@@ -27,3 +29,4 @@ spec:
       selfHeal: true
     syncOptions:
       - allowEmpty=true
+      - ApplyFromFiles=true

@@ -12,12 +12,8 @@ spec:
     path: clusters/dev
     directory:
       recurse: true
-      include:
-        - 'infrastructure/*.yaml'
-        - 'applications/*.yaml'
-      exclude:
-        - '**/bootstrap/**'
-        - '../prod/**'
+      include: '{infrastructure/*.yaml,applications/*.yaml}'
+      exclude: '{**/bootstrap/**,../prod/**}'
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
