@@ -8,13 +8,6 @@ spec:
   generators:
     - list:
         elements:
-          # - name: external-dns
-          #   chart: external-dns
-          #   repoURL: https://github.com/k-weaver/argo-demo.git
-          #   targetRevision: HEAD
-          #   chartPath: charts/external-dns
-          #   chartVersion: '1.16.0'
-          #   destNamespace: external-dns
           - name: keda
             chart: keda
             repoURL: https://github.com/k-weaver/argo-demo.git
