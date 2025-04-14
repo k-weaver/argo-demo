@@ -6,6 +6,8 @@ metadata:
     app.kubernetes.io/name: argo-cd
   name: argo-cd
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/manifest-generate-paths: '.'
 spec:
   destination:
     namespace: argocd
@@ -19,6 +21,8 @@ spec:
   source:
     path: clusters/dev/argocd
     repoURL: https://github.com/k-weaver/argo-demo.git
+    directory:
+      recurse: true
   syncPolicy:
     automated:
       allowEmpty: true
