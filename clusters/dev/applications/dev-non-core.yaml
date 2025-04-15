@@ -14,70 +14,139 @@ spec:
             repoURL: https://kubernetes-sigs.github.io/external-dns/
             destNamespace: external-dns
             env: dev
-            chartVersion: '1.15.2'
+            chartVersion: '1.16.0'
             function: networking
-            syncPolicy:
-              syncOptions:
-                - CreateNamespace=true
-                - RespectIgnoreDifferences=true
-                - AllowDowngrade=true
+            automationType: full
           - chart: keda
             repoURL: https://kedacore.github.io/charts
             destNamespace: keda
             env: dev
             chartVersion: 'v2.4.0'
             function: autoscaling
-            syncPolicy:
-              automated:
-                prune: true
-                selfHeal: true
-              syncOptions:
-                - CreateNamespace=true
-                - RespectIgnoreDifferences=true
-                - AllowDowngrade=true
+            automationType: partial
           - chart: helm-guestbook
-            repoURL: https://github.com/argoproj/argocd-example-apps
+            repoURL: https://github.com/argoproj/argocd-example-apps/helm-guestbook
             destNamespace: argo-guestbook
             env: dev
-            chartVersion: HEAD
+            chartVersion: 'HEAD'
             function: frontend
-            syncPolicy:
-              automated:
-                prune: true
-                selfHeal: true
-              syncOptions:
-                - CreateNamespace=true
-                - RespectIgnoreDifferences=true
-                - AllowDowngrade=true
-  ## The template section defines the common properties for all applications.
-  ## Changes to the template section will be applied to all applications, use caution!
-  template:
-    metadata:
-      name: '{{chart}}-{{env}}'
-      labels:
-        app.kubernetes.io/name: '{{chart}}'
-        app.kubernetes.io/instance: '{{chart}}-{{env}}'
-        environment: '{{env}}'
-        team: 'k8s-team'
-        function: '{{function}}'
-        chart-version: '{{chartVersion}}'
-      annotations:
-        argocd.argoproj.io/helm-version: v3
-    spec:
-      project: '{{env}}-non-core'
-      destination:
-        server: 'https://kubernetes.default.svc'
-        namespace: '{{destNamespace}}'
-      syncPolicy: '{{syncPolicy}}'
-      sources:
-        - repoURL: '{{repoURL}}'
-          targetRevision: '{{chartVersion}}'
-          chart: '{{chart}}'
-          helm:
-            releaseName: '{{chart}}'
-            valueFiles:
-              - $values/charts/{{chart}}/common.values.yaml
-              - $values/charts/{{chart}}/{{env}}.values.yaml
-        - repoURL: 'https://github.com/k-weaver/argo-demo.git'
-          targetRevision: 'HEAD'
-          ref: values
+            automationType: none
+  # Use templating to determine the sync policy appropriately
+  templates:
+    - name: full-automation
+      match:
+        automationType: full
+      template:
+        metadata:
+          name: '{{chart}}-{{env}}'
+          labels:
+            app.kubernetes.io/name: '{{chart}}'
+            app.kubernetes.io/instance: '{{chart}}-{{env}}'
+            environment: '{{env}}'
+            team: 'k8s-team'
+            function: '{{function}}'
+            chart-version: '{{chartVersion}}'
+          annotations:
+            argocd.argoproj.io/helm-version: v3
+        spec:
+          project: '{{env}}-non-core'
+          destination:
+            server: 'https://kubernetes.default.svc'
+            namespace: '{{destNamespace}}'
+          syncPolicy:
+            automated:
+              prune: true
+              selfHeal: true
+            syncOptions:
+              - CreateNamespace=true
+              - RespectIgnoreDifferences=true
+              - AllowDowngrade=true
+          sources:
+            - repoURL: '{{repoURL}}'
+              targetRevision: '{{chartVersion}}'
+              chart: '{{chart}}'
+              helm:
+                releaseName: '{{chart}}'
+                valueFiles:
+                  - $values/charts/{{chart}}/common.values.yaml
+                  - $values/charts/{{chart}}/{{env}}.values.yaml
+            - repoURL: 'https://github.com/k-weaver/argo-demo.git'
+              targetRevision: 'HEAD'
+              ref: values
+    - name: partial-automation
+      match:
+        automationType: partial
+      template:
+        metadata:
+          name: '{{chart}}-{{env}}'
+          labels:
+            app.kubernetes.io/name: '{{chart}}'
+            app.kubernetes.io/instance: '{{chart}}-{{env}}'
+            environment: '{{env}}'
+            team: 'k8s-team'
+            function: '{{function}}'
+            chart-version: '{{chartVersion}}'
+          annotations:
+            argocd.argoproj.io/helm-version: v3
+        spec:
+          project: '{{env}}-non-core'
+          destination:
+            server: 'https://kubernetes.default.svc'
+            namespace: '{{destNamespace}}'
+          syncPolicy:
+            automated:
+              prune: false
+              selfHeal: true
+            syncOptions:
+              - CreateNamespace=true
+              - RespectIgnoreDifferences=true
+              - AllowDowngrade=true
+          sources:
+            - repoURL: '{{repoURL}}'
+              targetRevision: '{{chartVersion}}'
+              chart: '{{chart}}'
+              helm:
+                releaseName: '{{chart}}'
+                valueFiles:
+                  - $values/charts/{{chart}}/common.values.yaml
+                  - $values/charts/{{chart}}/{{env}}.values.yaml
+            - repoURL: 'https://github.com/k-weaver/argo-demo.git'
+              targetRevision: 'HEAD'
+              ref: values
+    - name: no-automation
+      match:
+        automationType: none
+      template:
+        metadata:
+          name: '{{chart}}-{{env}}'
+          labels:
+            app.kubernetes.io/name: '{{chart}}'
+            app.kubernetes.io/instance: '{{chart}}-{{env}}'
+            environment: '{{env}}'
+            team: 'k8s-team'
+            function: '{{function}}'
+            chart-version: '{{chartVersion}}'
+          annotations:
+            argocd.argoproj.io/helm-version: v3
+        spec:
+          project: '{{env}}-non-core'
+          destination:
+            server: 'https://kubernetes.default.svc'
+            namespace: '{{destNamespace}}'
+          syncPolicy:
+            syncOptions:
+              - CreateNamespace=true
+              - RespectIgnoreDifferences=true
+              - AllowDowngrade=true
+          sources:
+            - repoURL: '{{repoURL}}'
+              targetRevision: '{{chartVersion}}'
+              chart: '{{chart}}'
+              helm:
+                releaseName: '{{chart}}'
+                valueFiles:
+                  - $values/charts/{{chart}}/common.values.yaml
+                  - $values/charts/{{chart}}/{{env}}.values.yaml
+            - repoURL: 'https://github.com/k-weaver/argo-demo.git'
+              targetRevision: 'HEAD'
+              ref: values
