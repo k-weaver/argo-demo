@@ -16,18 +16,20 @@ spec:
             env: dev
             chartVersion: '1.15.2'
             function: networking
-          # - chart: keda
-          #   repoURL: https://kedacore.github.io/charts
-          #   destNamespace: keda
-          #   env: dev
-          #   chartVersion: 'v2.4.0'
-          #   function: autoscaling
+          - chart: keda
+            repoURL: https://kedacore.github.io/charts
+            destNamespace: keda
+            env: dev
+            chartVersion: 'v2.4.0'
+            function: autoscaling
           - chart: helm-guestbook
             repoURL: https://github.com/argoproj/argocd-example-apps/helm-guestbook
             destNamespace: argo-guestbook
             env: dev
             chartVersion: 'HEAD'
             function: frontend
+  ## The template section defines the common properties for all applications.
+  ## Changes to the template section will be applied to all applications, use caution!
   template:
     metadata:
       name: '{{chart}}-{{env}}'
