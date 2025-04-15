@@ -16,18 +16,40 @@ spec:
             env: dev
             chartVersion: '1.15.2'
             function: networking
+            syncPolicy:
+              syncOptions:
+                - CreateNamespace=true
+                - RespectIgnoreDifferences=true
+                - AllowDowngrade=true
           - chart: keda
             repoURL: https://kedacore.github.io/charts
             destNamespace: keda
             env: dev
             chartVersion: 'v2.4.0'
             function: autoscaling
+            syncPolicy:
+              automated:
+                prune: true
+                selfHeal: true
+              syncOptions:
+                - CreateNamespace=true
+                - RespectIgnoreDifferences=true
+                - AllowDowngrade=true
           - chart: helm-guestbook
-            repoURL: https://github.com/argoproj/argocd-example-apps/helm-guestbook
+            repoURL: https://github.com/argoproj/argocd-example-apps
             destNamespace: argo-guestbook
             env: dev
             chartVersion: 'HEAD'
             function: frontend
+            syncPolicy:
+              syncPolicy:
+                automated:
+                  prune: true
+                  selfHeal: true
+              syncOptions:
+                - CreateNamespace=true
+                - RespectIgnoreDifferences=true
+                - AllowDowngrade=true
   ## The template section defines the common properties for all applications.
   ## Changes to the template section will be applied to all applications, use caution!
   template:
@@ -47,14 +69,7 @@ spec:
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{destNamespace}}'
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
-        syncOptions:
-          - CreateNamespace=true
-          - RespectIgnoreDifferences=true
-          - AllowDowngrade=true
+      syncPolicy: '{{syncPolicy}}'
       sources:
         - repoURL: '{{repoURL}}'
           targetRevision: '{{chartVersion}}'
