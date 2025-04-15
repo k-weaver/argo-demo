@@ -8,5 +8,7 @@ appVersion: '1.16.0'
 # Dependencies represent charts that this umbrella chart depends on
 dependencies:
   - name: keda
-    version: 'v2.4.0'
+    # Using a placeholder that can be overridden through values
+    # For safety, providing a default version if not specified
+    version: "{{ .Values.global.chartVersion | default 'v2.4.0' }}"
     repository: 'https://kedacore.github.io/charts'

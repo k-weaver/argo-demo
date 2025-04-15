@@ -1,3 +1,10 @@
+# Chart version control
+global:
+  # Controls the 3rd-party dependency version
+  chartVersion: 'v2.4.0'
+  # Controls which version of this umbrella chart to pull from Git
+  chartRef: 'v1.0.0'
+
 namespace: 'kube-system'
 
 serviceAccount:
