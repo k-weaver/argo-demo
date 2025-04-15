@@ -50,11 +50,6 @@ spec:
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.destNamespace}}'
-      syncPolicy:
-        syncOptions:
-          - CreateNamespace=true
-          - RespectIgnoreDifferences=true
-          - AllowDowngrade=true
       sources:
         - repoURL: '{{.repoURL}}'
           targetRevision: '{{.chartVersion}}'
@@ -86,6 +81,13 @@ spec:
           automated:
             prune: false
             selfHeal: true
+          syncOptions:
+            - CreateNamespace=true
+            - RespectIgnoreDifferences=true
+            - AllowDowngrade=true
+      {{- else if eq .autoSync "none" }}
+      spec:
+        syncPolicy:
           syncOptions:
             - CreateNamespace=true
             - RespectIgnoreDifferences=true
