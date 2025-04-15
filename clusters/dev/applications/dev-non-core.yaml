@@ -16,12 +16,18 @@ spec:
             env: dev
             chartVersion: '1.15.2'
             function: networking
-          - chart: keda
-            repoURL: https://kedacore.github.io/charts
-            destNamespace: keda
+          # - chart: keda
+          #   repoURL: https://kedacore.github.io/charts
+          #   destNamespace: keda
+          #   env: dev
+          #   chartVersion: 'v2.4.0'
+          #   function: autoscaling
+          - chart: helm-guestbook
+            repoURL: https://github.com/argoproj/argocd-example-apps/helm-guestbook
+            destNamespace: argo-guestbook
             env: dev
-            chartVersion: 'v2.4.0'
-            function: autoscaling
+            chartVersion: 'HEAD'
+            function: frontend
   template:
     metadata:
       name: '{{chart}}-{{env}}'
