@@ -42,18 +42,6 @@ spec:
         argocd.argoproj.io/helm-version: v3
     spec:
       project: '{{env}}-non-core'
-      source:
-        repoURL: '{{repoURL}}'
-        targetRevision: '{{chartVersion}}'
-        chart: '{{chart}}'
-        helm:
-          releaseName: '{{chart}}'
-          valueFiles:
-            - $values/common.values.yaml
-            - $values/{{env}}.values.yaml
-          # Enable Helm release tracking
-          createNamespace: true
-          releaseNamespace: '{{destNamespace}}'
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{destNamespace}}'
@@ -66,7 +54,17 @@ spec:
           - RespectIgnoreDifferences=true
           - AllowDowngrade=true
       sources:
+        - repoURL: '{{repoURL}}'
+          targetRevision: '{{chartVersion}}'
+          chart: '{{chart}}'
+          helm:
+            releaseName: '{{chart}}'
+            valueFiles:
+              - $values/charts/{{chart}}/common.values.yaml
+              - $values/charts/{{chart}}/{{env}}.values.yaml
+            # Enable Helm release tracking
+            createNamespace: true
+            releaseNamespace: '{{destNamespace}}'
         - repoURL: 'https://github.com/k-weaver/argo-demo.git'
           targetRevision: 'HEAD'
           ref: values
-          path: 'charts/{{chart}}'
