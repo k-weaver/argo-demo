@@ -8,7 +8,6 @@ appVersion: '1.16.0'
 # Dependencies represent charts that this umbrella chart depends on
 dependencies:
   - name: external-dns
-    # Using a placeholder that can be overridden through values
-    # For safety, providing a default version if not specified
-    version: "{{ .Values.global.chartVersion | default '1.16.0' }}"
+    # Using a flexible version constraint so that Argo parameters can override
+    version: '>=0.0.0'
     repository: 'https://kubernetes-sigs.github.io/external-dns/'

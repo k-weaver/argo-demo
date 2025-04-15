@@ -16,25 +16,24 @@ spec:
             chartPath: charts/external-dns
             destNamespace: external-dns
             valuesFile: dev
-            # This controls which version of your umbrella chart is pulled from Git
-            # Can be a tag, branch name, or commit hash
-            targetRevision: v1.0.0
+            targetRevision: HEAD
+            # Explicitly define the chart version - this overrides what's in Chart.yaml
+            chartVersion: '1.15.2'
           - name: keda
             chart: keda
             repoURL: https://github.com/k-weaver/argo-demo.git
             chartPath: charts/keda
             destNamespace: keda
             valuesFile: dev
-            # This controls which version of your umbrella chart is pulled from Git
-            # Can be a tag, branch name, or commit hash
-            targetRevision: v1.0.0
+            targetRevision: HEAD
+            # Explicitly define the chart version - this overrides what's in Chart.yaml
+            chartVersion: 'v2.4.0'
   template:
     metadata:
       name: '{{name}}'
       annotations:
         # Validate=false is used to skip validation of the Helm chart, required when allowing downgrades
         # RespectIgnoreDifferences=true is used to respect the ignoreDifferences settings in the Application
-        # This is required to prevent the ApplicationSet controller from overwriting the ignoreDifferences settings
         argocd.argoproj.io/sync-options: Validate=false,RespectIgnoreDifferences=true
         argocd.argoproj.io/helm-version: v3
     spec:
@@ -42,12 +41,17 @@ spec:
       source:
         repoURL: '{{repoURL}}'
         path: '{{chartPath}}'
-        # Use the targetRevision from the generator element
         targetRevision: '{{targetRevision}}'
         helm:
           valueFiles:
             - 'common.values.yaml'
             - '{{valuesFile}}.values.yaml'
+          # Use parameters to override the dependency version
+          parameters:
+            # This effectively tells Helm to use this version when installing the dependency
+            # This overrides the version in Chart.yaml
+            - name: 'dependencies[0].version'
+              value: '{{chartVersion}}'
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{destNamespace}}'
