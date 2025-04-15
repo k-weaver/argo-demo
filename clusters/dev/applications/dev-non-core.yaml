@@ -39,7 +39,7 @@ spec:
             repoURL: https://github.com/argoproj/argocd-example-apps
             destNamespace: argo-guestbook
             env: dev
-            chartVersion: 'HEAD'
+            chartVersion: HEAD
             function: frontend
             syncPolicy:
               syncPolicy:
