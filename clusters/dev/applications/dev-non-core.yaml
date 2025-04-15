@@ -17,7 +17,7 @@ spec:
             destNamespace: external-dns
             valuesFile: dev
             targetRevision: HEAD
-            # Explicitly define the chart version - this overrides what's in Chart.yaml
+            # Specific chart version we want to deploy
             chartVersion: '1.15.2'
           - name: keda
             chart: keda
@@ -26,14 +26,12 @@ spec:
             destNamespace: keda
             valuesFile: dev
             targetRevision: HEAD
-            # Explicitly define the chart version - this overrides what's in Chart.yaml
+            # Specific chart version we want to deploy
             chartVersion: 'v2.4.0'
   template:
     metadata:
       name: '{{name}}'
       annotations:
-        # Validate=false is used to skip validation of the Helm chart, required when allowing downgrades
-        # RespectIgnoreDifferences=true is used to respect the ignoreDifferences settings in the Application
         argocd.argoproj.io/sync-options: Validate=false,RespectIgnoreDifferences=true
         argocd.argoproj.io/helm-version: v3
     spec:
@@ -43,15 +41,12 @@ spec:
         path: '{{chartPath}}'
         targetRevision: '{{targetRevision}}'
         helm:
+          # Use the specific chart version through the releaseName property
+          releaseName: '{{name}}'
           valueFiles:
             - 'common.values.yaml'
             - '{{valuesFile}}.values.yaml'
-          # Use parameters to override the dependency version
-          parameters:
-            # This effectively tells Helm to use this version when installing the dependency
-            # This overrides the version in Chart.yaml
-            - name: 'dependencies[0].version'
-              value: '{{chartVersion}}'
+          version: '{{chartVersion}}'
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{destNamespace}}'
