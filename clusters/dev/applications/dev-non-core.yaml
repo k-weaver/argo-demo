@@ -10,43 +10,39 @@ spec:
   generators:
     - list:
         elements:
-          - name: external-dns
-            chart: external-dns
-            repoURL: https://github.com/k-weaver/argo-demo.git
-            chartPath: charts/external-dns
+          - chart: external-dns
+            repoURL: 'https://kubernetes-sigs.github.io/external-dns/'
             destNamespace: external-dns
-            valuesFile: dev
-            targetRevision: HEAD
-            # Specific chart version we want to deploy
+            env: dev
             chartVersion: '1.15.2'
-          - name: keda
-            chart: keda
-            repoURL: https://github.com/k-weaver/argo-demo.git
-            chartPath: charts/keda
+          - chart: keda
+            repoURL: 'https://kedacore.github.io/charts'
             destNamespace: keda
-            valuesFile: dev
-            targetRevision: HEAD
-            # Specific chart version we want to deploy
+            env: dev
             chartVersion: 'v2.4.0'
   template:
     metadata:
-      name: '{{name}}'
+      name: '{{chart}}-{{env}}'
+      labels:
+        app.kubernetes.io/name: '{{chart}}'
+        app.kubernetes.io/instance: '{{chart}}-{{env}}'
+        environment: '{{env}}'
+        team: 'k8s'
+        tier: 'non-core'
+        chart-version: '{{chartVersion}}'
       annotations:
-        argocd.argoproj.io/sync-options: Validate=false,RespectIgnoreDifferences=true
         argocd.argoproj.io/helm-version: v3
     spec:
-      project: dev-non-core
+      project: '{{env}}-non-core'
       source:
         repoURL: '{{repoURL}}'
         path: '{{chartPath}}'
-        targetRevision: '{{targetRevision}}'
+        targetRevision: '{{chartVersion}}'
         helm:
-          # Use the specific chart version through the releaseName property
-          releaseName: '{{name}}'
+          releaseName: '{{chart}}-{{env}}'
           valueFiles:
-            - 'common.values.yaml'
-            - '{{valuesFile}}.values.yaml'
-          version: '{{chartVersion}}'
+            - 'git://https://github.com/k-weaver/argo-demo?path=charts/{{chart}}/common.values.yaml'
+            - 'git://https://github.com/k-weaver/argo-demo?path=charts/{{chart}}/{{env}}.values.yaml'
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{destNamespace}}'
