@@ -64,9 +64,6 @@ spec:
             valueFiles:
               - $values/charts/{{chart}}/common.values.yaml
               - $values/charts/{{chart}}/{{env}}.values.yaml
-            # Enable Helm release tracking
-            createNamespace: true
-            releaseNamespace: '{{destNamespace}}'
         - repoURL: 'https://github.com/k-weaver/argo-demo.git'
           targetRevision: 'HEAD'
           ref: values
