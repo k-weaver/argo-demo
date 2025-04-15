@@ -10,25 +10,33 @@ spec:
   generators:
     - list:
         elements:
-          - chart: external-dns
-            repoURL: 'https://kubernetes-sigs.github.io/external-dns/'
+          - name: external-dns
+            chart: external-dns
+            repoURL: https://kubernetes-sigs.github.io/external-dns/
+            valuesRepo: https://github.com/k-weaver/argo-demo.git
             destNamespace: external-dns
             env: dev
+            targetRevision: HEAD
             chartVersion: '1.15.2'
-          - chart: keda
-            repoURL: 'https://kedacore.github.io/charts'
+            function: networking
+          - name: keda
+            chart: keda
+            repoURL: https://kedacore.github.io/charts
+            valuesRepo: https://github.com/k-weaver/argo-demo.git
             destNamespace: keda
             env: dev
+            targetRevision: HEAD
             chartVersion: 'v2.4.0'
+            function: autoscaling
   template:
     metadata:
-      name: '{{chart}}-{{env}}'
+      name: '{{name}}-{{env}}'
       labels:
         app.kubernetes.io/name: '{{chart}}'
         app.kubernetes.io/instance: '{{chart}}-{{env}}'
         environment: '{{env}}'
-        team: 'k8s'
-        tier: 'non-core'
+        team: 'k8s-team'
+        function: '{{function}}'
         chart-version: '{{chartVersion}}'
       annotations:
         argocd.argoproj.io/helm-version: v3
@@ -36,13 +44,13 @@ spec:
       project: '{{env}}-non-core'
       source:
         repoURL: '{{repoURL}}'
-        path: '{{chartPath}}'
         targetRevision: '{{chartVersion}}'
+        chart: '{{chart}}'
         helm:
-          releaseName: '{{chart}}-{{env}}'
+          releaseName: '{{chart}}'
           valueFiles:
-            - 'git://https://github.com/k-weaver/argo-demo?path=charts/{{chart}}/common.values.yaml'
-            - 'git://https://github.com/k-weaver/argo-demo?path=charts/{{chart}}/{{env}}.values.yaml'
+            - $values/charts/{{chart}}/common.values.yaml
+            - $values/charts/{{chart}}/{{env}}.values.yaml
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{destNamespace}}'
@@ -54,3 +62,7 @@ spec:
           - CreateNamespace=true
           - RespectIgnoreDifferences=true
           - AllowDowngrade=true
+      sources:
+        - repoURL: '{{valuesRepo}}'
+          targetRevision: '{{targetRevision}}'
+          ref: values
