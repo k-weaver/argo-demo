@@ -51,6 +51,9 @@ spec:
           valueFiles:
             - $values/common.values.yaml
             - $values/{{env}}.values.yaml
+          # Enable Helm release tracking
+          createNamespace: true
+          releaseNamespace: '{{destNamespace}}'
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{destNamespace}}'
