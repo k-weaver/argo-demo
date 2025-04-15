@@ -10,15 +10,13 @@ spec:
   generators:
     - list:
         elements:
-          - name: external-dns
-            chart: external-dns
+          - chart: external-dns
             repoURL: https://kubernetes-sigs.github.io/external-dns/
             destNamespace: external-dns
             env: dev
             chartVersion: '1.15.2'
             function: networking
-          - name: keda
-            chart: keda
+          - chart: keda
             repoURL: https://kedacore.github.io/charts
             destNamespace: keda
             env: dev
@@ -26,7 +24,7 @@ spec:
             function: autoscaling
   template:
     metadata:
-      name: '{{name}}-{{env}}'
+      name: '{{chart}}-{{env}}'
       labels:
         app.kubernetes.io/name: '{{chart}}'
         app.kubernetes.io/instance: '{{chart}}-{{env}}'
@@ -43,7 +41,7 @@ spec:
         targetRevision: '{{chartVersion}}'
         chart: '{{chart}}'
         helm:
-          releaseName: '{{name}}'
+          releaseName: '{{chart}}'
           valueFiles:
             - $values/common.values.yaml
             - $values/{{env}}.values.yaml
@@ -62,4 +60,4 @@ spec:
         - repoURL: 'https://github.com/k-weaver/argo-demo.git'
           targetRevision: 'HEAD'
           ref: values
-          path: 'charts/{{env}}'
+          path: 'charts/{{chart}}'
