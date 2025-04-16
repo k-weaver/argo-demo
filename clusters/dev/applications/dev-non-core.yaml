@@ -8,6 +8,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '100'
 spec:
   goTemplate: true
+  goTemplateOptions: ['missingkey=error']
   generators:
     - list:
         elements:
@@ -15,27 +16,25 @@ spec:
             repoURL: https://kubernetes-sigs.github.io/external-dns/
             destNamespace: external-dns
             env: dev
-            chartVersion: '1.16.0'
+            chartVersion: '1.15.2'
             function: networking
-            autoSync: 'full'
           - chart: keda
             repoURL: https://kedacore.github.io/charts
             destNamespace: keda
             env: dev
             chartVersion: 'v2.4.0'
             function: autoscaling
-            autoSync: 'partial'
           - chart: helm-guestbook
             repoURL: https://github.com/argoproj/argocd-example-apps/helm-guestbook
             destNamespace: argo-guestbook
             env: dev
-            chartVersion: 'main'
+            chartVersion: 'HEAD'
             function: frontend
-            autoSync: 'none'
   ## The template section defines the common properties for all applications.
+  ## Changes to the template section will be applied to all applications, use caution!
   template:
     metadata:
-      name: '{{.chart}}-{{.env}}'
+      name: '{{..chart}}-{{..env}}'
       labels:
         app.kubernetes.io/name: '{{.chart}}'
         app.kubernetes.io/instance: '{{.chart}}-{{.env}}'
@@ -51,6 +50,9 @@ spec:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.destNamespace}}'
       syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
           - RespectIgnoreDifferences=true
@@ -67,17 +69,3 @@ spec:
         - repoURL: 'https://github.com/k-weaver/argo-demo.git'
           targetRevision: 'HEAD'
           ref: values
-    templatePatch: |
-      {{- if eq .autoSync "full" }}
-      spec:
-        syncPolicy:
-          automated:
-            prune: true
-            selfHeal: true
-      {{- else if eq .autoSync "partial" }}
-      spec:
-        syncPolicy:
-          automated:
-            prune: false
-            selfHeal: true
-      {{- end }}
