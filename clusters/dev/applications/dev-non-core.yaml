@@ -16,7 +16,7 @@ spec:
             repoURL: https://kubernetes-sigs.github.io/external-dns/
             destNamespace: external-dns
             env: dev
-            chartVersion: '1.15.2'
+            chartVersion: '1.16.0'
             function: networking
           - chart: keda
             repoURL: https://kedacore.github.io/charts
