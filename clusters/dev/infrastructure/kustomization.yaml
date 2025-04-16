@@ -20,10 +20,9 @@ configMapGenerator:
     name: argocd-cm
   - behavior: merge
     literals:
+      - policy.default=role:readonly
       - |
-        policy.default: role:readonly
-        policy.csv: |
-          g, argo-test, role:admin
+        policy.csv=g, argo-test, role:admin
     name: argocd-rbac-cm
 secretGenerator:
   - name: argocd-secret-argo-test
