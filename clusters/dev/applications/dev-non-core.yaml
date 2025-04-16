@@ -17,21 +17,21 @@ spec:
             env: dev
             chartVersion: '1.16.0'
             function: networking
-            autoSync: full
+            autoSync: 'full'
           - chart: keda
             repoURL: https://kedacore.github.io/charts
             destNamespace: keda
             env: dev
             chartVersion: 'v2.4.0'
             function: autoscaling
-            autoSync: partial
+            autoSync: 'partial'
           - chart: helm-guestbook
             repoURL: https://github.com/argoproj/argocd-example-apps/helm-guestbook
             destNamespace: argo-guestbook
             env: dev
             chartVersion: 'HEAD'
             function: frontend
-            autoSync: none
+            autoSync: 'none'
   ## The template section defines the common properties for all applications.
   template:
     metadata:
@@ -50,6 +50,11 @@ spec:
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: '{{.destNamespace}}'
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          - RespectIgnoreDifferences=true
+          - AllowDowngrade=true
       sources:
         - repoURL: '{{.repoURL}}'
           targetRevision: '{{.chartVersion}}'
@@ -62,8 +67,6 @@ spec:
         - repoURL: 'https://github.com/k-weaver/argo-demo.git'
           targetRevision: 'HEAD'
           ref: values
-    # This patch is used to conditionally set the sync policy based on the autoSync value.
-    # https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Template/#template-patch
     templatePatch: |
       {{- if eq .autoSync "full" }}
       spec:
@@ -71,25 +74,10 @@ spec:
           automated:
             prune: true
             selfHeal: true
-          syncOptions:
-            - CreateNamespace=true
-            - RespectIgnoreDifferences=true
-            - AllowDowngrade=true
       {{- else if eq .autoSync "partial" }}
       spec:
         syncPolicy:
           automated:
             prune: false
             selfHeal: true
-          syncOptions:
-            - CreateNamespace=true
-            - RespectIgnoreDifferences=true
-            - AllowDowngrade=true
-      {{- else if eq .autoSync "none" }}
-      spec:
-        syncPolicy:
-          syncOptions:
-            - CreateNamespace=true
-            - RespectIgnoreDifferences=true
-            - AllowDowngrade=true
       {{- end }}
