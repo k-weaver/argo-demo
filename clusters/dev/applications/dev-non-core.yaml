@@ -18,18 +18,30 @@ spec:
             env: dev
             chartVersion: '1.15.2'
             function: networking
+            autoSync: false
+            createNamespace: true
           - chart: keda
             repoURL: https://kedacore.github.io/charts
             destNamespace: keda
             env: dev
             chartVersion: 'v2.4.0'
             function: autoscaling
+            autoSync: true
+            prune: true
+            selfHeal: true
+            createNamespace: true
+            applyOutOfSyncOnly: true
           - chart: hello-world
             repoURL: https://helm.github.io/examples
             destNamespace: sample-apps
             env: dev
             chartVersion: '0.1.0'
             function: frontend
+            autoSync: true
+            prune: true
+            selfHeal: true
+            createNamespace: true
+            applyOutOfSyncOnly: true
   ## The template section defines the common properties for all applications.
   ## Changes to the template section will be applied to all applications, use caution!
   template:
@@ -69,3 +81,44 @@ spec:
         - repoURL: 'https://github.com/k-weaver/argo-demo.git'
           targetRevision: 'HEAD'
           ref: values
+    templatePatch: |
+      {{- if .autoSync }}
+        syncPolicy:
+          automated:
+            {{- if .prune }}
+            prune: true
+            {{- else }}
+            prune: false
+            {{- end }}
+            {{- if .selfHeal }}
+            selfHeal: true
+            {{- else }}
+            selfHeal: false
+            {{- end }}
+          syncOptions:
+            {{- if .createNamespace }}
+            - CreateNamespace=true
+            {{- else }}
+            - CreateNamespace=false
+            {{- end }}
+            {{- if .applyOutOfSyncOnly }}
+            - ApplyOutOfSyncOnly=true
+            {{- else }}
+            - ApplyOutOfSyncOnly=false
+            {{- end }}
+            - AllowDowngrade=true
+      {{- else }}
+        syncPolicy:
+          syncOptions:
+            {{- if .createNamespace }}
+            - CreateNamespace=true
+            {{- else }}
+            - CreateNamespace=false
+            {{- end }}
+            {{- if .applyOutOfSyncOnly }}
+            - ApplyOutOfSyncOnly=true
+            {{- else }}
+            - ApplyOutOfSyncOnly=false
+            {{- end }}
+            - AllowDowngrade=true
+      {{- end }}
