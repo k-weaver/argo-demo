@@ -29,7 +29,7 @@ spec:
             repoURL: https://github.com/argoproj/argocd-example-apps/helm-guestbook
             destNamespace: argo-guestbook
             env: dev
-            chartVersion: 'HEAD'
+            chartVersion: 'main'
             function: frontend
             autoSync: 'none'
   ## The template section defines the common properties for all applications.
