@@ -34,7 +34,7 @@ spec:
   ## Changes to the template section will be applied to all applications, use caution!
   template:
     metadata:
-      name: '{{..chart}}-{{..env}}'
+      name: '{{.chart}}-{{.env}}'
       labels:
         app.kubernetes.io/name: '{{.chart}}'
         app.kubernetes.io/instance: '{{.chart}}-{{.env}}'
