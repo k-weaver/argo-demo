@@ -15,4 +15,17 @@ configMapGenerator:
           usernameSecret:
             key: username
             name: github-repo-creds
+      - |
+        accounts.argo-test=apiKey,login
     name: argocd-cm
+  - behavior: merge
+    literals:
+      - |
+        policy.default: role:readonly
+        policy.csv: |
+          g, argo-test, role:admin
+    name: argocd-rbac-cm
+secretGenerator:
+  - name: argocd-secret-argo-test
+    literals:
+      - 'argo-test.password=testpassword'
