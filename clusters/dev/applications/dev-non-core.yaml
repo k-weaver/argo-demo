@@ -25,7 +25,7 @@ spec:
             chartVersion: 'v2.4.0'
             function: autoscaling
           - chart: hello-world
-            repoURL: https://helm.github.io/examples/charts/hello-world
+            repoURL: https://helm.github.io/examples
             destNamespace: sample-apps
             env: dev
             chartVersion: '0.1.0'
