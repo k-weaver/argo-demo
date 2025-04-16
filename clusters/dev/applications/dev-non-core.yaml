@@ -28,7 +28,7 @@ spec:
             repoURL: https://helm.github.io/examples/charts/hello-world
             destNamespace: sample-apps
             env: dev
-            chartVersion: 'main'
+            chartVersion: '0.1.0'
             function: frontend
   ## The template section defines the common properties for all applications.
   ## Changes to the template section will be applied to all applications, use caution!
