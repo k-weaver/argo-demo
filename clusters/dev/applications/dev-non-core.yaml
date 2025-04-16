@@ -24,11 +24,11 @@ spec:
             env: dev
             chartVersion: 'v2.4.0'
             function: autoscaling
-          - chart: helm-guestbook
-            repoURL: https://github.com/argoproj/argocd-example-apps/helm-guestbook
-            destNamespace: argo-guestbook
+          - chart: hello-world
+            repoURL: https://helm.github.io/examples/charts/hello-world
+            destNamespace: sample-apps
             env: dev
-            chartVersion: 'HEAD'
+            chartVersion: 'main'
             function: frontend
   ## The template section defines the common properties for all applications.
   ## Changes to the template section will be applied to all applications, use caution!
