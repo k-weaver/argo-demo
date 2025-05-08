@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: argocd
 resources:
-  - https://github.com/argoproj/argo-cd/manifests/base?ref=v2.10.3
+  - https://github.com/argoproj/argo-cd/manifests/cluster-install?ref=v2.10.3
   - project-definitions.yaml
 configMapGenerator:
   - behavior: merge
@@ -24,7 +24,3 @@ configMapGenerator:
       - |
         policy.csv=g, argo-test, role:admin
     name: argocd-rbac-cm
-secretGenerator:
-  - name: argocd-secret-argo-test
-    literals:
-      - 'argo-test.password=testpassword'
